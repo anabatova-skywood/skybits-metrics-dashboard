@@ -96,6 +96,8 @@
 
   <div class="card full"><h2>Top 10 User Actions</h2><div class="chart-box tall"><canvas id="actionsChart"></canvas></div></div>
 
+  <div class="card full"><h2>Documents Created per User <span style="font-weight:400;color:var(--grey);font-size:13px;">· anonymized</span></h2><div class="chart-box"><canvas id="docsUserChart"></canvas></div></div>
+
   <div class="grid">
     <div class="card"><h2>New Users per Day</h2><div class="chart-box"><canvas id="newUsersChart"></canvas></div></div>
     <div class="card"><h2>DAU / MAU Stickiness</h2><div class="chart-box"><canvas id="stickyChart"></canvas></div></div>
@@ -164,6 +166,18 @@ fetch("data.json?t=" + Date.now()).then(r => r.json()).then(d => {
       scales: { y: { grid: gridLine, beginAtZero: true },
         x: { grid: { display: false }, ticks: { maxRotation: 30, minRotation: 30, autoSkip: false,
           callback: function(v){ const l = this.getLabelForValue(v); return l.length > 18 ? l.slice(0,18)+"…" : l; } } } } }
+  });
+
+  // Documents created per user — anonymized ranked bar
+  const dpu = d.docs_created_per_user || [];
+  new Chart(document.getElementById("docsUserChart"), {
+    type: "bar",
+    data: { labels: dpu.map((_, i) => "User " + (i + 1)),
+      datasets: [{ label: "Documents created", data: dpu, backgroundColor: NAVY, borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { title: () => "" } } },
+      scales: { y: { grid: gridLine, beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } }
   });
 
   const days = d.timeseries.days.map(fmtDate);
