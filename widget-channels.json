@@ -1,0 +1,33 @@
+{
+  "definition": {
+    "title": "Acquisition Channels (external referrers)",
+    "title_size": "16",
+    "title_align": "left",
+    "type": "toplist",
+    "requests": [
+      {
+        "response_format": "scalar",
+        "queries": [
+          {
+            "data_source": "rum",
+            "name": "q",
+            "search": {
+              "query": "@type:view $env @application.name:skybits.ai -@view.referrer:*skybits.ai* -@view.referrer:\"\""
+            },
+            "indexes": ["*"],
+            "group_by": [
+              {
+                "facet": "@view.referrer",
+                "limit": 15,
+                "sort": { "aggregation": "count", "order": "desc" }
+              }
+            ],
+            "compute": { "aggregation": "count" }
+          }
+        ],
+        "formulas": [{ "formula": "q" }]
+      }
+    ]
+  },
+  "layout": { "x": 0, "y": 17, "width": 6, "height": 4 }
+}
