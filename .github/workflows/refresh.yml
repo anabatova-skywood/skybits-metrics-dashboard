@@ -37,7 +37,7 @@ jobs:
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
           DD_SITE: ${{ secrets.DD_SITE }}
           DD_DEBUG: "1"
-        run: node scripts/diagnose.mjs
+        run: node scripts/fetch-metrics.mjs
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
