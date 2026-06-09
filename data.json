@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "title": "Skybits — Product Metrics",
+    "subtitle": "Production environment · Powered by Datadog RUM",
+    "env": "prod",
+    "application": "skybits.ai",
+    "updated": "2026-06-09T09:13:38.000Z",
+    "window_days": 30,
+    "history_from": "2026-06-05",
+    "history_to": "2026-06-09"
+  },
+  "kpis": {
+    "unique_users": 7,
+    "total_sessions": 55,
+    "avg_sessions_per_user": 7.9,
+    "top_country": { "name": "United States", "sessions": 24 }
+  },
+  "top_pages": [
+    { "path": "/documents (list)", "visits": 1038 },
+    { "path": "doc/cf4eaafa…", "visits": 598 },
+    { "path": "doc/96e78b28…", "visits": 177 },
+    { "path": "doc/5a683af2…", "visits": 43 },
+    { "path": "doc/8bfde0ed…", "visits": 26 },
+    { "path": "doc/bada1695…", "visits": 14 },
+    { "path": "/", "visits": 6 },
+    { "path": "doc/5ea4b679…", "visits": 6 },
+    { "path": "doc/f395f83b…", "visits": 6 },
+    { "path": "/settings", "visits": 6 }
+  ],
+  "sessions_by_country": [
+    { "country": "United States", "sessions": 24 },
+    { "country": "Ukraine", "sessions": 13 },
+    { "country": "Germany", "sessions": 10 },
+    { "country": "Poland", "sessions": 4 },
+    { "country": "Bolivia", "sessions": 3 },
+    { "country": "Netherlands", "sessions": 1 }
+  ],
+  "top_actions": [
+    { "name": "SkyBits Go-To-Market Strategy (doc)", "count": 73 },
+    { "name": "Untitled document (doc)", "count": 63 },
+    { "name": "document_opened", "count": 27 },
+    { "name": "suggestion_accepted", "count": 27 },
+    { "name": "Alexander Frolikov profile (doc)", "count": 23 },
+    { "name": "✓ Accept", "count": 23 },
+    { "name": "Share", "count": 20 },
+    { "name": "(unnamed)", "count": 19 },
+    { "name": "Add people by email or name", "count": 19 },
+    { "name": "Close", "count": 17 }
+  ],
+  "timeseries": {
+    "days": ["2026-06-05", "2026-06-06", "2026-06-07", "2026-06-08", "2026-06-09"],
+    "new_users": [2, 0, 1, 4, 0],
+    "dau": [2, 2, 2, 5, 1],
+    "mau": [2, 2, 3, 7, 7],
+    "stickiness": [1.0, 1.0, 0.67, 0.71, 0.14]
+  }
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Skybits — Product Metrics</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #1b1f7a;
+    --blue: #3b5bdb;
+    --cyan: #22b8e6;
+    --cyan-light: #74d9f2;
+    --orange: #f59f0b;
+    --grey: #9aa3b2;
+    --ink: #1c2230;
+    --muted: #6b7280;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --border: #e6e9f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 32px 28px 64px; }
+  header.page { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  h1 { font-size: 30px; font-weight: 800; color: var(--navy); margin: 0 0 6px; letter-spacing: -0.4px; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .env-pill {
+    border: 1.5px solid var(--blue); color: var(--blue); border-radius: 999px;
+    font-size: 13px; font-weight: 700; padding: 4px 14px; white-space: nowrap;
+  }
+  .updated { color: var(--grey); font-size: 13px; margin-top: 6px; text-align: right; }
+  .rule { height: 3px; background: var(--navy); border-radius: 3px; margin: 18px 0 26px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 24px; }
+  .kpi {
+    background: var(--card); border-radius: 14px; padding: 22px 22px 20px; position: relative;
+    border: 1px solid var(--border); overflow: hidden;
+  }
+  .kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+  .kpi.k1::before { background: var(--navy); }
+  .kpi.k2::before { background: var(--cyan); }
+  .kpi.k3::before { background: var(--blue); }
+  .kpi.k4::before { background: var(--orange); }
+  .kpi .label { font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .kpi .value { font-size: 40px; font-weight: 800; color: var(--navy); line-height: 1.1; margin: 8px 0 4px; }
+  .kpi .value.text { font-size: 26px; }
+  .kpi .foot { font-size: 13px; color: var(--grey); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 22px 24px;
+    border: 1px solid var(--border); margin-bottom: 18px;
+  }
+  .card h2 { font-size: 17px; font-weight: 700; margin: 0 0 16px; color: var(--ink); }
+  .card.full { grid-column: 1 / -1; }
+  .chart-box { position: relative; height: 300px; }
+  .chart-box.tall { height: 340px; }
+  footer { margin-top: 28px; color: var(--grey); font-size: 12px; text-align: center; }
+  footer code { background: #eef0f6; padding: 1px 6px; border-radius: 5px; }
+  .note { background: #fff7e6; border: 1px solid #ffe2a8; color: #8a5a00; font-size: 13px;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 22px; }
+  @media (max-width: 900px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <div>
+      <h1 id="title">Skybits — Product Metrics</h1>
+      <div class="sub" id="subtitle"></div>
+    </div>
+    <div>
+      <span class="env-pill" id="env">env: prod</span>
+      <div class="updated" id="updated"></div>
+    </div>
+  </header>
+  <div class="rule"></div>
+
+  <div class="note" id="rangeNote"></div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <div class="grid">
+    <div class="card"><h2>Top Pages by Visits</h2><div class="chart-box"><canvas id="pagesChart"></canvas></div></div>
+    <div class="card"><h2>Sessions by Country</h2><div class="chart-box"><canvas id="countryChart"></canvas></div></div>
+  </div>
+
+  <div class="card full"><h2>Top 10 User Actions</h2><div class="chart-box tall"><canvas id="actionsChart"></canvas></div></div>
+
+  <div class="grid">
+    <div class="card"><h2>New Users per Day</h2><div class="chart-box"><canvas id="newUsersChart"></canvas></div></div>
+    <div class="card"><h2>DAU / MAU Stickiness</h2><div class="chart-box"><canvas id="stickyChart"></canvas></div></div>
+  </div>
+</div>
+
+<footer>
+  Auto-refreshed from Datadog RUM via scheduled GitHub Action · static snapshot in <code>data.json</code>
+</footer>
+
+<script>
+const NAVY="#1b1f7a", BLUE="#3b5bdb", CYAN="#22b8e6", CYAN_L="#74d9f2", ORANGE="#f59f0b", GREY="#b8c0cc";
+const COUNTRY_COLORS=[NAVY, BLUE, CYAN, CYAN_L, ORANGE, GREY, "#8a94f5", "#d0d5e0"];
+Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+Chart.defaults.color = "#6b7280";
+
+function fmtDate(iso){ const d=new Date(iso); return d.toLocaleString(undefined,{month:"short",day:"numeric"}); }
+
+fetch("data.json?t=" + Date.now()).then(r => r.json()).then(d => {
+  document.getElementById("title").textContent = d.meta.title;
+  document.getElementById("subtitle").textContent =
+    d.meta.subtitle + " · Last " + d.meta.window_days + " days";
+  document.getElementById("env").textContent = "env: " + d.meta.env;
+  document.getElementById("updated").textContent =
+    "Updated " + new Date(d.meta.updated).toLocaleString();
+  document.getElementById("rangeNote").textContent =
+    "Time-series charts show all available RUM history (" + fmtDate(d.meta.history_from) +
+    " – " + fmtDate(d.meta.history_to) + "). The window will extend toward 3 months as history accumulates.";
+
+  // KPIs
+  const k = d.kpis;
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi k1"><div class="label">Unique Users</div><div class="value">${k.unique_users}</div><div class="foot">last ${d.meta.window_days} days</div></div>
+    <div class="kpi k2"><div class="label">Total Sessions</div><div class="value">${k.total_sessions}</div><div class="foot">last ${d.meta.window_days} days</div></div>
+    <div class="kpi k3"><div class="label">Avg Sessions / User</div><div class="value">${k.avg_sessions_per_user}</div><div class="foot">engagement depth</div></div>
+    <div class="kpi k4"><div class="label">Top Country</div><div class="value text">${k.top_country.name}</div><div class="foot">${k.top_country.sessions} sessions</div></div>`;
+
+  const gridLine = { color: "#eef0f5" };
+
+  // Top pages — horizontal bar
+  new Chart(document.getElementById("pagesChart"), {
+    type: "bar",
+    data: { labels: d.top_pages.map(p => p.path),
+      datasets: [{ data: d.top_pages.map(p => p.visits), backgroundColor: BLUE, borderRadius: 3, barThickness: 14 }] },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: gridLine, beginAtZero: true }, y: { grid: { display: false } } } }
+  });
+
+  // Sessions by country — doughnut
+  new Chart(document.getElementById("countryChart"), {
+    type: "doughnut",
+    data: { labels: d.sessions_by_country.map(c => c.country),
+      datasets: [{ data: d.sessions_by_country.map(c => c.sessions), backgroundColor: COUNTRY_COLORS, borderWidth: 2, borderColor: "#fff" }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "58%",
+      plugins: { legend: { position: "right", labels: { boxWidth: 14, padding: 12 } } } }
+  });
+
+  // Top actions — vertical bar
+  new Chart(document.getElementById("actionsChart"), {
+    type: "bar",
+    data: { labels: d.top_actions.map(a => a.name),
+      datasets: [{ data: d.top_actions.map(a => a.count), backgroundColor: CYAN, borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { grid: gridLine, beginAtZero: true },
+        x: { grid: { display: false }, ticks: { maxRotation: 30, minRotation: 30, autoSkip: false,
+          callback: function(v){ const l = this.getLabelForValue(v); return l.length > 18 ? l.slice(0,18)+"…" : l; } } } } }
+  });
+
+  const days = d.timeseries.days.map(fmtDate);
+
+  // New users per day — bar
+  new Chart(document.getElementById("newUsersChart"), {
+    type: "bar",
+    data: { labels: days,
+      datasets: [{ label: "New users", data: d.timeseries.new_users, backgroundColor: ORANGE, borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { grid: gridLine, beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } }
+  });
+
+  // DAU/MAU stickiness — line with DAU & MAU
+  new Chart(document.getElementById("stickyChart"), {
+    type: "line",
+    data: { labels: days,
+      datasets: [
+        { label: "DAU", data: d.timeseries.dau, borderColor: BLUE, backgroundColor: BLUE, tension: .3, yAxisID: "y" },
+        { label: "MAU", data: d.timeseries.mau, borderColor: GREY, backgroundColor: GREY, borderDash: [5,4], tension: .3, yAxisID: "y" },
+        { label: "DAU/MAU", data: d.timeseries.stickiness.map(v => +(v*100).toFixed(0)), borderColor: ORANGE, backgroundColor: ORANGE, tension: .3, yAxisID: "y1" }
+      ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 14, padding: 14 } } },
+      scales: {
+        y: { position: "left", grid: gridLine, beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: "users" } },
+        y1: { position: "right", grid: { display: false }, beginAtZero: true, max: 100, ticks: { callback: v => v + "%" }, title: { display: true, text: "stickiness" } },
+        x: { grid: { display: false } } }
+    }
+  });
+}).catch(e => {
+  document.querySelector(".wrap").insertAdjacentHTML("beforeend",
+    '<div class="note">Failed to load data.json: ' + e + '</div>');
+});
+</script>
+</body>
+</html>
