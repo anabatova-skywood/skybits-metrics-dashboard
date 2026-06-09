@@ -49,6 +49,9 @@ async function aggregate({ query, compute, groupBy = [], from = `now-${WINDOW_DA
     throw new Error(`Datadog ${res.status}: ${await res.text()}`);
   }
   const json = await res.json();
+  if (process.env.DD_DEBUG) {
+    console.error("DEBUG query=" + query + " :: " + JSON.stringify(json).slice(0, 1500));
+  }
   return json.data?.buckets || [];
 }
 

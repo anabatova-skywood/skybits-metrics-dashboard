@@ -36,6 +36,7 @@ jobs:
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
           DD_SITE: ${{ secrets.DD_SITE }}
+          DD_DEBUG: "1"
         run: node scripts/fetch-metrics.mjs
 
       - name: Upload site artifact
