@@ -1,0 +1,261 @@
+{
+  "title": "Skybits — Product Metrics (RUM)",
+  "description": "Product metrics for skybits.ai sourced from Datadog RUM. Mirrors the shared web dashboard. Scope with the $env template variable (default: prod).",
+  "layout_type": "ordered",
+  "reflow_type": "fixed",
+  "template_variables": [
+    {
+      "name": "env",
+      "prefix": "env",
+      "available_values": ["prod", "staging", "dev", "development"],
+      "default": "prod"
+    }
+  ],
+  "widgets": [
+    {
+      "definition": {
+        "title": "Unique Users",
+        "type": "query_value",
+        "precision": 0,
+        "autoscale": true,
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "users",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [],
+                "compute": { "aggregation": "cardinality", "metric": "@usr.id" }
+              }
+            ],
+            "formulas": [{ "formula": "users" }]
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 0, "width": 3, "height": 2 }
+    },
+    {
+      "definition": {
+        "title": "Total Sessions",
+        "type": "query_value",
+        "precision": 0,
+        "autoscale": true,
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "sessions",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [],
+                "compute": { "aggregation": "cardinality", "metric": "@session.id" }
+              }
+            ],
+            "formulas": [{ "formula": "sessions" }]
+          }
+        ]
+      },
+      "layout": { "x": 3, "y": 0, "width": 3, "height": 2 }
+    },
+    {
+      "definition": {
+        "title": "Avg Sessions / User",
+        "type": "query_value",
+        "precision": 1,
+        "autoscale": true,
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "sessions",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [],
+                "compute": { "aggregation": "cardinality", "metric": "@session.id" }
+              },
+              {
+                "data_source": "rum",
+                "name": "users",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [],
+                "compute": { "aggregation": "cardinality", "metric": "@usr.id" }
+              }
+            ],
+            "formulas": [{ "formula": "sessions / users" }]
+          }
+        ]
+      },
+      "layout": { "x": 6, "y": 0, "width": 3, "height": 2 }
+    },
+    {
+      "definition": {
+        "title": "Top Country",
+        "type": "toplist",
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "q",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [
+                  { "facet": "@geo.country", "limit": 1, "sort": { "aggregation": "count", "order": "desc" } }
+                ],
+                "compute": { "aggregation": "count" }
+              }
+            ],
+            "formulas": [{ "formula": "q" }]
+          }
+        ]
+      },
+      "layout": { "x": 9, "y": 0, "width": 3, "height": 2 }
+    },
+    {
+      "definition": {
+        "title": "Top Pages by Visits",
+        "type": "toplist",
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "q",
+                "search": { "query": "@type:view env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [
+                  { "facet": "@view.url_path", "limit": 10, "sort": { "aggregation": "count", "order": "desc" } }
+                ],
+                "compute": { "aggregation": "count" }
+              }
+            ],
+            "formulas": [{ "formula": "q" }]
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 2, "width": 6, "height": 4 }
+    },
+    {
+      "definition": {
+        "title": "Sessions by Country",
+        "type": "sunburst",
+        "legend": { "type": "automatic" },
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "q",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [
+                  { "facet": "@geo.country", "limit": 20, "sort": { "aggregation": "count", "order": "desc" } }
+                ],
+                "compute": { "aggregation": "count" }
+              }
+            ],
+            "formulas": [{ "formula": "q" }]
+          }
+        ]
+      },
+      "layout": { "x": 6, "y": 2, "width": 6, "height": 4 }
+    },
+    {
+      "definition": {
+        "title": "Top 10 User Actions",
+        "type": "toplist",
+        "requests": [
+          {
+            "response_format": "scalar",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "q",
+                "search": { "query": "@type:action env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [
+                  { "facet": "@action.target.name", "limit": 10, "sort": { "aggregation": "count", "order": "desc" } }
+                ],
+                "compute": { "aggregation": "count" }
+              }
+            ],
+            "formulas": [{ "formula": "q" }]
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 6, "width": 12, "height": 4 }
+    },
+    {
+      "definition": {
+        "title": "Daily Active Users (DAU)",
+        "type": "timeseries",
+        "show_legend": false,
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "display_type": "bars",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "dau",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [],
+                "compute": { "aggregation": "cardinality", "metric": "@usr.id", "interval": 86400000 }
+              }
+            ],
+            "formulas": [{ "formula": "dau" }]
+          }
+        ]
+      },
+      "layout": { "x": 0, "y": 10, "width": 6, "height": 4 }
+    },
+    {
+      "definition": {
+        "title": "Sessions per Day",
+        "type": "timeseries",
+        "show_legend": false,
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "display_type": "bars",
+            "queries": [
+              {
+                "data_source": "rum",
+                "name": "sessions",
+                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "indexes": ["*"],
+                "group_by": [],
+                "compute": { "aggregation": "cardinality", "metric": "@session.id", "interval": 86400000 }
+              }
+            ],
+            "formulas": [{ "formula": "sessions" }]
+          }
+        ]
+      },
+      "layout": { "x": 6, "y": 10, "width": 6, "height": 4 }
+    },
+    {
+      "definition": {
+        "type": "note",
+        "content": "**Notes & limitations**\n\n- This dashboard mirrors the shared web dashboard's data, but three charts there are NOT natively expressible as single RUM queries: **New users per day**, **New vs Returning split**, and **DAU/MAU stickiness**. They require first-seen / rolling-window logic, which the web dashboard computes in a script (scripts/fetch-metrics.mjs). Options in Datadog: add a MAU query_value (cardinality @usr.id with the dashboard set to 30d) and read stickiness as DAU÷MAU by eye, or use RUM **Retention** analytics for cohort retention.\n- All widgets scope to `@application.name:skybits.ai` and the `$env` template variable (default prod). Set the dashboard time picker to **Last 30 days** to match the web dashboard's KPI cards.\n- RUM instrumentation started ~2026-06-05, so history is short and will fill in over time.",
+        "background_color": "yellow",
+        "font_size": "14",
+        "text_align": "left",
+        "show_tick": false
+      },
+      "layout": { "x": 0, "y": 14, "width": 12, "height": 3 }
+    }
+  ]
+}
