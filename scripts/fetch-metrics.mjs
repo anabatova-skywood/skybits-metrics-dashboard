@@ -101,18 +101,6 @@ async function main() {
     .map((b) => ({ name: b.by["@action.target.name"] || "(unnamed)", count: val(b, "c0") }))
     .sort((a, b) => b.count - a.count);
 
-  // Documents created per user (anonymized: ranked counts only, no names/emails)
-  const docsPerUser = (await aggregate({
-    query: `@type:action env:${ENV} @action.target.name:document_created`,
-    from: hist,
-    to: now,
-    compute: [{ aggregation: "count", type: "total" }],
-    groupBy: [{ facet: "@usr.id", limit: 100, total: false }],
-  }))
-    .map((b) => val(b, "c0"))
-    .filter((n) => n > 0)
-    .sort((a, b) => b - a);
-
   // Time series: per-day distinct users. One query per day over the history window
   // gives us the active-user set per day, from which we derive DAU, new users, and MAU.
   const dayUsers = new Map(); // 'YYYY-MM-DD' -> Set(userId)
@@ -172,7 +160,6 @@ async function main() {
     top_pages: topPages,
     sessions_by_country: sessionsByCountry,
     top_actions: topActions,
-    docs_created_per_user: docsPerUser,
     timeseries: { days, new_users: newUsers, dau, mau, stickiness },
   };
 

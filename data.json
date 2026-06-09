@@ -47,7 +47,6 @@
     { "name": "Add people by email or name", "count": 19 },
     { "name": "Close", "count": 17 }
   ],
-  "docs_created_per_user": [1, 1],
   "timeseries": {
     "days": ["2026-06-05", "2026-06-06", "2026-06-07", "2026-06-08", "2026-06-09"],
     "new_users": [2, 0, 1, 4, 0],
