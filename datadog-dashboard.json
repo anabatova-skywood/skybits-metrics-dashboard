@@ -25,7 +25,7 @@
               {
                 "data_source": "rum",
                 "name": "users",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [],
                 "compute": { "aggregation": "cardinality", "metric": "@usr.id" }
@@ -50,7 +50,7 @@
               {
                 "data_source": "rum",
                 "name": "sessions",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [],
                 "compute": { "aggregation": "cardinality", "metric": "@session.id" }
@@ -75,7 +75,7 @@
               {
                 "data_source": "rum",
                 "name": "sessions",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [],
                 "compute": { "aggregation": "cardinality", "metric": "@session.id" }
@@ -83,7 +83,7 @@
               {
                 "data_source": "rum",
                 "name": "users",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [],
                 "compute": { "aggregation": "cardinality", "metric": "@usr.id" }
@@ -106,7 +106,7 @@
               {
                 "data_source": "rum",
                 "name": "q",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [
                   { "facet": "@geo.country", "limit": 1, "sort": { "aggregation": "count", "order": "desc" } }
@@ -131,7 +131,7 @@
               {
                 "data_source": "rum",
                 "name": "q",
-                "search": { "query": "@type:view env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:view $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [
                   { "facet": "@view.url_path", "limit": 10, "sort": { "aggregation": "count", "order": "desc" } }
@@ -157,7 +157,7 @@
               {
                 "data_source": "rum",
                 "name": "q",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [
                   { "facet": "@geo.country", "limit": 20, "sort": { "aggregation": "count", "order": "desc" } }
@@ -182,7 +182,7 @@
               {
                 "data_source": "rum",
                 "name": "q",
-                "search": { "query": "@type:action env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:action $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [
                   { "facet": "@action.target.name", "limit": 10, "sort": { "aggregation": "count", "order": "desc" } }
@@ -209,7 +209,7 @@
               {
                 "data_source": "rum",
                 "name": "dau",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [],
                 "compute": { "aggregation": "cardinality", "metric": "@usr.id", "interval": 86400000 }
@@ -234,7 +234,7 @@
               {
                 "data_source": "rum",
                 "name": "sessions",
-                "search": { "query": "@type:session env:$env @application.name:skybits.ai" },
+                "search": { "query": "@type:session $env @application.name:skybits.ai" },
                 "indexes": ["*"],
                 "group_by": [],
                 "compute": { "aggregation": "cardinality", "metric": "@session.id", "interval": 86400000 }
