@@ -126,10 +126,12 @@ async function main() {
   }
 
   const days = [...dayUsers.keys()].sort();
-  const newUsers = [], dau = [], mau = [], stickiness = [];
+  const newUsers = [], returningUsers = [], dau = [], mau = [], stickiness = [];
   for (const day of days) {
     const users = dayUsers.get(day);
-    newUsers.push([...users].filter((u) => firstSeen.get(u) === day).length);
+    const nu = [...users].filter((u) => firstSeen.get(u) === day).length;
+    newUsers.push(nu);
+    returningUsers.push(users.size - nu);
     dau.push(users.size);
     const cutoff = new Date(new Date(day).getTime() - 29 * DAY).toISOString().slice(0, 10);
     const window = new Set();
@@ -160,7 +162,7 @@ async function main() {
     top_pages: topPages,
     sessions_by_country: sessionsByCountry,
     top_actions: topActions,
-    timeseries: { days, new_users: newUsers, dau, mau, stickiness },
+    timeseries: { days, new_users: newUsers, returning_users: returningUsers, dau, mau, stickiness },
   };
 
   const out = join(dirname(fileURLToPath(import.meta.url)), "..", "data.json");

@@ -97,7 +97,7 @@
   <div class="card full"><h2>Top 10 User Actions</h2><div class="chart-box tall"><canvas id="actionsChart"></canvas></div></div>
 
   <div class="grid">
-    <div class="card"><h2>New Users per Day</h2><div class="chart-box"><canvas id="newUsersChart"></canvas></div></div>
+    <div class="card"><h2>New vs Returning Users per Day</h2><div class="chart-box"><canvas id="newUsersChart"></canvas></div></div>
     <div class="card"><h2>DAU / MAU Stickiness</h2><div class="chart-box"><canvas id="stickyChart"></canvas></div></div>
   </div>
 </div>
@@ -168,14 +168,18 @@ fetch("data.json?t=" + Date.now()).then(r => r.json()).then(d => {
 
   const days = d.timeseries.days.map(fmtDate);
 
-  // New users per day — bar
+  // New vs Returning users per day — stacked bar
   new Chart(document.getElementById("newUsersChart"), {
     type: "bar",
     data: { labels: days,
-      datasets: [{ label: "New users", data: d.timeseries.new_users, backgroundColor: ORANGE, borderRadius: 4 }] },
+      datasets: [
+        { label: "New", data: d.timeseries.new_users, backgroundColor: ORANGE, borderRadius: 4 },
+        { label: "Returning", data: d.timeseries.returning_users || [], backgroundColor: BLUE, borderRadius: 4 }
+      ] },
     options: { responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: gridLine, beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } }
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 14, padding: 14 } } },
+      scales: { x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, grid: gridLine, beginAtZero: true, ticks: { precision: 0 } } } }
   });
 
   // DAU/MAU stickiness — line with DAU & MAU
